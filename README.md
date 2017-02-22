@@ -1,6 +1,6 @@
 ﻿## SiteImprove Umbraco Plugin
 
-### Run local on machine
+### Run on local machine
 Reference class library to Umbraco project 
 
 Add the following to Post-Build event command line:
