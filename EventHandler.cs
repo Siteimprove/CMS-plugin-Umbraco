@@ -15,12 +15,13 @@ namespace SiteImprove.Umbraco.Plugin
             TreeControllerBase.MenuRendering += TreeControllerBase_MenuRendering;
             base.ApplicationStarted(umbracoApplication, applicationContext);
         }
-
+        
         private void TreeControllerBase_MenuRendering(TreeControllerBase sender, MenuRenderingEventArgs e)
         {
             if(sender.TreeAlias == "content")
             {
-                e.Menu.Items.Add(new SiteImproveMenuItem());
+                e.Menu.Items.Add(new SiteImproveStartMenuItem());
+                e.Menu.Items.Add(new SiteImproveRecheckMenuItem());
             }
         }
     }

@@ -9,13 +9,15 @@ using umbraco.cms.businesslogic.web;
 using Umbraco.Core.Models;
 using Umbraco.Core.Services;
 using Umbraco.Web.WebApi;
+using Newtonsoft.Json;
 
 namespace SiteImprove.Umbraco.Plugin
 {
-    public class SiteImproveTokenController : UmbracoAuthorizedApiController
+    public class SiteImproveController : UmbracoAuthorizedApiController
     {
         private const string SiteImprovePropertyAlias = "SiteImproveToken";
 
+        [HttpGet]
         public async Task<IHttpActionResult> GetToken()
         {
             // Get root node of application
@@ -49,14 +51,21 @@ namespace SiteImprove.Umbraco.Plugin
                 contentService.SaveAndPublishWithStatus(content);
             }
 
-            return Ok(token);
+            return Json(token);
         }
+
+        [HttpGet]
+        public IHttpActionResult GetPageUrl(int pageId)
+        {
+            return Json(Umbraco.NiceUrl(pageId));
+        }
+
 
         private async Task<string> GetNewToken()
         {
             using (var client = new HttpClient())
             {
-                return await client.GetStringAsync("https://overlay.siteimprove.com/auth/token");
+                return JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync("https://overlay.siteimprove.com/auth/token"))["token"];
             }
         }
 

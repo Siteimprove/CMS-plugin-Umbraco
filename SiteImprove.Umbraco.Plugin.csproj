@@ -258,8 +258,9 @@
   <ItemGroup>
     <Compile Include="EventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SiteImproveMenuItem.cs" />
-    <Compile Include="SiteImproveTokenController.cs" />
+    <Compile Include="SiteImproveRecheckMenuItem.cs" />
+    <Compile Include="SiteImproveStartMenuItem.cs" />
+    <Compile Include="SiteImproveController.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
