@@ -1,7 +1,7 @@
 #Package information
 $packageGuid = "4592a559-2bd8-4e75-b79e-6343764a454c"
 $packageName = "SiteImproveUmbracoPlugin"
-$packageVersion = "0.2.0"
+$packageVersion = "0.1.5"
 
 #Locations
 $currentLocation = Get-Location
