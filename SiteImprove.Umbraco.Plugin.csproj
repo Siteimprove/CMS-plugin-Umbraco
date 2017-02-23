@@ -264,6 +264,12 @@
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="App_Plugins\SiteImprove\siteimprove.helper.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\SiteImprove\siteimprove.main.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="package.xml">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -272,6 +278,7 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="App_Plugins\SiteImprove\siteimprove.controller.js">

@@ -20,7 +20,6 @@ namespace SiteImprove.Umbraco.Plugin
         {
             if(sender.TreeAlias == "content")
             {
-                e.Menu.Items.Add(new SiteImproveStartMenuItem());
                 e.Menu.Items.Add(new SiteImproveRecheckMenuItem());
             }
         }
