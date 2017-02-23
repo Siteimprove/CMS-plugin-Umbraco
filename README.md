@@ -7,3 +7,8 @@ Add the following to Post-Build event command line:
 ``` shell
 xcopy /I /E /Y "$(ProjectDir)bin\App_Plugins" "$(ProjectDir)App_Plugins"
 ```
+
+Start console output after document ready
+```js
+siteimprove.log = true
+```

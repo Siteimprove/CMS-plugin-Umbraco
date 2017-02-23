@@ -30,9 +30,9 @@
   <info>
     <package>
       <name>SiteImproveUmbracoPlugin</name>
-      <version>0.1.5</version>
+      <version>0.1.2</version>
       <iconUrl />
-      <license url="http://www.kruso.dk">Licensed to Kruso Digital</license>
+      <license url="http://opensource.org/licenses/MIT">MIT License</license>
       <url>http://www.kruso.dk</url>
       <requirements type="strict">
         <major>7</major>

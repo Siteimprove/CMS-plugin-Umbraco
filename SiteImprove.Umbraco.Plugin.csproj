@@ -277,6 +277,7 @@
     <Content Include="App_Plugins\SiteImprove\package.manifest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="createPackage.ps1" />
     <None Include="packages.config" />
     <None Include="README.md" />
   </ItemGroup>
