@@ -1,7 +1,7 @@
 #Package information
 $packageGuid = "4592a559-2bd8-4e75-b79e-6343764a454c"
 $packageName = "SiteImproveUmbracoPlugin"
-$packageVersion = "0.1.5"
+$packageVersion = "1.0.0"
 
 #Locations
 $currentLocation = Get-Location
@@ -21,16 +21,16 @@ $packageXml.Save("$currentLocation\package.xml")
 # Create the package folder
 $newPackageRootFolder = "$UmbracoPackagesFolder\$packageName" + "_v$packageVersion" 
 $newPackageFolder = "$newPackageRootFolder\$packageGuid"
-New-Item $newPackageFolder -type directory
+New-Item $newPackageFolder -type directory -Force
 Write-Host "Created folder $newPackageFolder"
 
 # Move all the items
-Copy-Item "$pluginFolder\*" $newPackageFolder
-Copy-Item "$currentLocation\bin\Debug\SiteImprove.Umbraco.Plugin.dll" $newPackageFolder
-Copy-Item "$currentLocation\package.xml" $newPackageFolder
+Copy-Item "$pluginFolder\*" $newPackageFolder -Recurse -Force
+Copy-Item "$currentLocation\bin\Debug\SiteImprove.Umbraco.Plugin.dll" $newPackageFolder -Force
+Copy-Item "$currentLocation\package.xml" $newPackageFolder -Force
 
 # Zip the folder, ready to use in Umbraco
-Compress-Archive -Path $newPackageRootFolder -DestinationPath "$newPackageRootFolder.zip"
+Compress-Archive -Path $newPackageRootFolder -DestinationPath "$newPackageRootFolder.zip" -Force
 
 Write-Host "Done"
 Read-Host

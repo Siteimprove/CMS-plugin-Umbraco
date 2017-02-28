@@ -1,8 +1,8 @@
 ﻿using Umbraco.Web.Models.Trees;
 
-namespace SiteImprove.Umbraco.Plugin
+namespace SiteImprove.Umbraco.Plugin.MenuActions
 {
-    [ActionMenuItem("SiteImproveMenuActions", "Recheck")]
+    [ActionMenuItem(Constants.SiteImproveMenuActionFactory, "Recheck")]
     class SiteImproveRecheckMenuItem : ActionMenuItem
     {
         public SiteImproveRecheckMenuItem()

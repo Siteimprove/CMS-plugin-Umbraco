@@ -1,8 +1,8 @@
 ﻿using Umbraco.Web.Models.Trees;
 
-namespace SiteImprove.Umbraco.Plugin
+namespace SiteImprove.Umbraco.Plugin.MenuActions
 {
-    [ActionMenuItem("SiteImproveMenuActions", "Start")]
+    [ActionMenuItem(Constants.SiteImproveMenuActionFactory, "Start")]
     public class SiteImproveStartMenuItem : ActionMenuItem
     {
         public SiteImproveStartMenuItem()

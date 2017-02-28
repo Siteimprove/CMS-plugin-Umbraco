@@ -256,14 +256,24 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Constants.cs" />
+    <Compile Include="Db\SiteImproveSettingsHelper.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SiteImproveRecheckMenuItem.cs" />
-    <Compile Include="SiteImproveStartMenuItem.cs" />
+    <Compile Include="Db\SiteImproveSettingsModel.cs" />
+    <Compile Include="MenuActions\SiteImproveRecheckMenuItem.cs" />
+    <Compile Include="MenuActions\SiteImproveStartMenuItem.cs" />
     <Compile Include="SiteImproveController.cs" />
+    <Compile Include="SiteImproveSection.cs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
+    <Content Include="App_Plugins\SiteImprove\views\dashboard.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="App_Plugins\SiteImprove\dashboard.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="App_Plugins\SiteImprove\siteimprove.helper.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
