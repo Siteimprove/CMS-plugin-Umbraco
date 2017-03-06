@@ -19,7 +19,6 @@ namespace SiteImprove.Umbraco.Plugin
             TreeControllerBase.MenuRendering += TreeControllerBase_MenuRendering;
 
             this.AddDbTable(applicationContext);
-            //this.AddSiteImproveSection(applicationContext);
         }
         
         private void TreeControllerBase_MenuRendering(TreeControllerBase sender, MenuRenderingEventArgs e)
@@ -32,18 +31,12 @@ namespace SiteImprove.Umbraco.Plugin
 
         private void AddDbTable(ApplicationContext applicationContext)
         {
-            var ctx = applicationContext.DatabaseContext;
-            var db = new DatabaseSchemaHelper(ctx.Database, applicationContext.ProfilingLogger.Logger, ctx.SqlSyntax);
+            var db = applicationContext.DatabaseContext.Database;
 
             if (!db.TableExist(Constants.SiteImproveDbTalbe))
             {
                 db.CreateTable<SiteImproveSettingsModel>(false);
             }
-        }
-
-        private void AddSiteImproveSection(ApplicationContext applicationContext)
-        {
-            applicationContext.Services.SectionService.MakeNew("SiteImprove", "SiteImprove", "icon-car");
         }
     }
 }

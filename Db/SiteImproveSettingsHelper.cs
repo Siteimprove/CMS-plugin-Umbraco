@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
+﻿using Newtonsoft.Json.Linq;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Umbraco.Core;
 
@@ -49,7 +46,8 @@ namespace SiteImprove.Umbraco.Plugin.Db
         {
             using (var client = new HttpClient())
             {
-                return JsonConvert.DeserializeObject<dynamic>(await client.GetStringAsync(Constants.SiteImproveTokenUrl))["token"];
+                string response = await client.GetStringAsync(Constants.SiteImproveTokenUrl);
+                return JObject.Parse(response).GetValue("token").ToString();
             }
         }
     }

@@ -40,14 +40,14 @@
   <info>
     <package>
       <name>SiteImproveUmbracoPlugin</name>
-      <version>1.0.0</version>
+      <version>1.1.0</version>
       <iconUrl />
       <license url="http://www.kruso.dk">Licensed to Kruso Digital</license>
       <url>http://www.kruso.dk</url>
       <requirements type="strict">
         <major>7</major>
-        <minor>5</minor>
-        <patch>10</patch>
+        <minor>1</minor>
+        <patch>9</patch>
       </requirements>
     </package>
     <author>

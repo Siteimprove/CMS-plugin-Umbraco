@@ -1,4 +1,6 @@
 ﻿using SiteImprove.Umbraco.Plugin.Db;
+using System.Net;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Web.Http;
 using Umbraco.Web.Mvc;
@@ -9,21 +11,34 @@ namespace SiteImprove.Umbraco.Plugin
     public class SiteImproveController : UmbracoAuthorizedApiController
     {
         [HttpGet]
-        public async Task<IHttpActionResult> GetToken()
+        public async Task<HttpResponseMessage> GetToken()
         {
-            return Json(await SiteImproveSettingsHelper.GetToken(ApplicationContext.DatabaseContext));
+            return Request.CreateResponse(
+                HttpStatusCode.OK, 
+                await SiteImproveSettingsHelper.GetToken(ApplicationContext.DatabaseContext));
         }
 
         [HttpGet]
-        public async Task<IHttpActionResult> RequestNewToken()
+        public async Task<HttpResponseMessage> RequestNewToken()
         {
-            return Json(await SiteImproveSettingsHelper.GetNewToken(ApplicationContext.DatabaseContext));
+            return Request.CreateResponse(
+                HttpStatusCode.OK, 
+                await SiteImproveSettingsHelper.GetNewToken(ApplicationContext.DatabaseContext));
         }
 
         [HttpGet]
-        public IHttpActionResult GetPageUrl(int pageId)
+        public HttpResponseMessage GetPageUrl(int pageId)
         {
-            return Json(Umbraco.NiceUrl(pageId));
+            var node = Umbraco.TypedContent(pageId);
+            if(node == null)
+            {
+                return Request.CreateErrorResponse(HttpStatusCode.BadRequest, "No published page with that id");
+            }
+
+            return Request.CreateResponse(
+                HttpStatusCode.OK,
+                Umbraco.NiceUrlWithDomain(pageId)
+                );
         }
     }
 }
