@@ -1,4 +1,4 @@
-﻿﻿## SiteImprove Umbraco Plugin
+﻿## SiteImprove Umbraco Plugin 
 
 ### Run on local machine
 Reference class library to Umbraco project 
@@ -16,5 +16,3 @@ siteimprove.log = true
 ### Build the Umbraco package
 You can simply run the createPackage powershell (version 5) script, which will build the application, copy all the files in the right folder (/UmbracoPackages) and then finally zip the folder.
 In the "createPackage.ps1" you will find variables for defining which version it will build as.
-=======
-# CMS-plugin-Umbraco
