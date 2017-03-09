@@ -248,7 +248,6 @@
     <Content Include="App_Plugins\SiteImprove\package.manifest">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <None Include="app.config" />
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>

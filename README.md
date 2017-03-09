@@ -1,5 +1,8 @@
 ﻿## SiteImprove Umbraco Plugin 
 
+### Install
+Install either through the CMS or install the nuget both are located under /build/Package
+
 ### Run on local machine
 Reference class library to Umbraco project 
 
@@ -16,3 +19,6 @@ siteimprove.log = true
 
 ### Build the Umbraco package
 Run the build.bat
+
+## TODO
+ - Upload package to some nuget repository
