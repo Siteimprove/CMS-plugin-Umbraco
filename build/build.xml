@@ -1,0 +1,126 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003" DefaultTargets="Package">
+
+  <!-- Assemblies -->
+  <PropertyGroup>
+    <MSBuildCommunityTasksPath>$(MSBuildProjectDirectory)\tools\MSBuildCommunityTasks</MSBuildCommunityTasksPath>
+    <MSBuildUmbracoTasksPath>$(MSBuildProjectDirectory)\tools\MSBuildUmbracoTasks</MSBuildUmbracoTasksPath>
+    <MSBuildNugetTasksPath>$(MSBuildProjectDirectory)\tools\MSBuildNugetTasks</MSBuildNugetTasksPath>
+  </PropertyGroup>
+
+  <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
+  <Import Project="$(MSBuildUmbracoTasksPath)\MSBuild.Umbraco.Tasks.Targets" />
+  <Import Project="$(MSBuildNugetTasksPath)\MSBuild.NuGet.Tasks.Targets" />
+  
+  
+  <!-- Properties -->
+  <PropertyGroup>
+    <RootDir>$(MSBuildProjectDirectory)\..</RootDir>
+    <BuildDir>$(MSBuildProjectDirectory)\Build</BuildDir>
+    <PackageDir>$(MSBuildProjectDirectory)\Package</PackageDir>
+    <BuildNuGetDir>$(MSBuildProjectDirectory)\NugetBuild</BuildNuGetDir>
+    <CoreProjectDir>$(RootDir)\src</CoreProjectDir>
+  </PropertyGroup>
+  
+  <PropertyGroup>
+    <VersionMajor>1</VersionMajor>
+    <VersionMinor>1</VersionMinor>
+    <VersionPatch>0</VersionPatch>
+    <VersionSuffix></VersionSuffix>
+    <UmbracoVersion>7.1.9</UmbracoVersion>
+  </PropertyGroup>
+
+  <!-- Items -->
+  <ItemGroup>
+    <ProjectToBuild Include="$(CoreProjectDir)\SiteImprove.Umbraco.Plugin.csproj">
+      <Properties>Configuration=Release</Properties>
+    </ProjectToBuild>
+  </ItemGroup>
+
+  <!-- Targets -->
+  <Target Name="Clean">
+    <RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
+    <RemoveDir Directories="$(PackageDir)" Condition="Exists('$(PackageDir)')" />
+    <MakeDir Directories="$(BuildDir)" />
+    <MakeDir Directories="$(PackageDir)" />
+    <MakeDir Directories="$(BuildNuGetDir)" />
+  </Target>
+
+  <Target Name="UpdateAssemblyInfo" DependsOnTargets="Clean">
+		<Version Major="$(VersionMajor)" Minor="$(VersionMinor)" BuildType="None" RevisionType="Automatic">
+			<Output TaskParameter="Build" PropertyName="Build" />
+			<Output TaskParameter="Revision" PropertyName="Revision" />
+		</Version>
+		<AssemblyInfo CodeLanguage="CS"
+			OutputFile="$(CoreProjectDir)\Properties\VersionInfo.cs"
+			AssemblyVersion="$(VersionMajor).$(VersionMinor).$(VersionPatch)"
+			AssemblyFileVersion="$(VersionMajor).$(VersionMinor).$(Build).$(Revision)"
+			AssemblyInformationalVersion="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"/>
+	</Target>
+
+  <Target Name="Compile" DependsOnTargets="UpdateAssemblyInfo">
+    <MSBuild Projects="@(ProjectToBuild)" />
+  </Target>
+
+  <!-- Prep Files -->
+  <Target Name="PrepairFiles" DependsOnTargets="Compile">
+    <ItemGroup>
+      <BinFiles Include="$(CoreProjectDir)\Bin\Release\SiteImprove.Umbraco.Plugin.dll" />
+      <WebFiles Include="$(CoreProjectDir)\App_Plugins\**\*.*" />
+      <PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
+      <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
+      <TransFroms Include="$(MSBuildProjectDirectory)\nuget-transforms\*.*" />
+      <DashboardConfigXDTInstallFile Include="$(MSBuildProjectDirectory)\transforms\dashboard.config.install.xdt" />
+    </ItemGroup>
+    <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildDir)\bin" />
+    <Copy SourceFiles="@(WebFiles)" DestinationFolder="$(BuildDir)\App_Plugins\%(RecursiveDir)" />
+    <Copy SourceFiles="@(PackageFile)" DestinationFolder="$(BuildDir)" />
+    <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildNuGetDir)\lib\net45" />
+    <Copy SourceFiles="@(WebFiles)" DestinationFolder="$(BuildNuGetDir)\App_Plugins\%(RecursiveDir)" />
+    <Copy SourceFiles="@(NuSpecFile)" DestinationFolder="$(BuildNuGetDir)" />
+    <Copy SourceFiles="@(TransFroms)" DestinationFolder="$(BuildNuGetDir)\nuget-transforms\%(RecursiveDir)" />
+    <Copy SourceFiles="@(DashboardConfigXDTInstallFile)" DestinationFolder="$(BuildNuGetDir)\Content\Config" />
+  </Target>
+
+  <Target Name="ManifestUmbraco" DependsOnTargets="PrepairFiles">
+    <ItemGroup>
+      <ManifestFiles Include="$(BuildDir)\**\*" Exclude="$(BuildDir)\Package.xml" />
+    </ItemGroup>
+    <ManifestUpdate ManifestFile="$(BuildDir)\package.xml"
+			WorkingDirectory="$(BuildDir)"
+			MinimumRequiredUmbracoVersion="$(UmbracoVersion)"
+			PackageVersion="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"
+			Files="@(ManifestFiles)" />
+  </Target>
+
+  <Target Name="ManifestNuGet" DependsOnTargets="ManifestUmbraco">
+    <ItemGroup>
+      <ManifestFiles Include="$(BuildNuGetDir)\**\*" Exclude="$(BuildNuGetDir)\package.nuspec" />
+    </ItemGroup>
+    <MSBuild.NuGet.Tasks.ManifestUpdate
+				ManifestFile="$(BuildNuGetDir)\package.nuspec"
+				WorkingDirectory="$(BuildNuGetDir)"
+				Version="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"
+				Files="@(ManifestFiles)" />
+  </Target>
+  
+  <Target Name="Package" DependsOnTargets="ManifestNuGet">
+    <ItemGroup>
+      <PackageFiles Include="$(BuildDir)\**\*.*" />
+    </ItemGroup>
+    <Package ManifestFile="$(BuildDir)\Package.xml"
+			WorkingDirectory="$(BuildDir)"
+			OutputDirectory="$(PackageDir)"
+			Files="@(PackageFiles)" />
+
+    <MSBuild.NuGet.Tasks.Pack NuGetExePath="$(RootDir)\Build\nuget\nuget.exe"
+          ManifestFile="$(BuildNuGetDir)\package.nuspec"
+          BasePath="$(BuildNuGetDir)"
+          Version="$(VersionMajor).$(VersionMinor).$(VersionPatch)$(VersionSuffix)"
+          OutputDirectory="$(PackageDir)" />
+
+    <RemoveDir Directories="$(BuildDir)" Condition="Exists('$(BuildDir)')" />
+    <RemoveDir Directories="$(BuildNuGetDir)" Condition="Exists('$(BuildNuGetDir)')" />
+  </Target>
+  
+</Project>

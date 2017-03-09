@@ -8,11 +8,11 @@ Add the following to Post-Build event command line:
 xcopy /I /E /Y "$(ProjectDir)bin\App_Plugins" "$(ProjectDir)App_Plugins"
 ```
 
+# Check logs
 Start console output after document ready
 ```js
 siteimprove.log = true
 ```
 
 ### Build the Umbraco package
-You can simply run the createPackage powershell (version 5) script, which will build the application, copy all the files in the right folder (/UmbracoPackages) and then finally zip the folder.
-In the "createPackage.ps1" you will find variables for defining which version it will build as.
+Run the build.bat

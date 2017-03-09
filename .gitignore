@@ -1,3 +1,5 @@
 App_Data
 bin
 obj
+packages
+*.user

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+  <metadata>
+    <id>SiteImprove.Umbraco.Plugin.csproj</id>
+    <version>1.0.0</version>
+    <authors>Kruso</authors>
+    <owners>Siteimprove</owners>
+    <licenseUrl>http://siteimprove.com</licenseUrl>
+    <projectUrl>https://github.com/Siteimprove/CMS-plugin-Umbraco</projectUrl>
+    <iconUrl>http://siteimprove.com/wp-content/uploads/2015/09/logo.png</iconUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Plugin tool for Umbraco</description>
+    <copyright>Siteimprove</copyright>
+    <tags>umbraco Siteimprove</tags>
+    <dependencies>
+      <dependency id="UmbracoCms.Core" version="7.1.9" />
+    </dependencies>    
+  </metadata>
+  <files>
+    <file src="App_Plugins\**\*.*" target="Content\App_Plugins" />
+  </files>
+</package>

@@ -1,9 +1,0 @@
-﻿{
-    javascript: [
-		'~/App_Plugins/SiteImprove/siteimprove.helper.js',
-        '~/App_Plugins/SiteImprove/siteimprove.main.js',
-		'~/App_Plugins/SiteImprove/siteimprove.controller.js',
-		'~/App_Plugins/SiteImprove/dashboard.js',
-		'https://cdn.siteimprove.net/overlay.js'
-    ]
-}
