@@ -11,7 +11,7 @@ Add the following to Post-Build event command line:
 xcopy /I /E /Y "$(ProjectDir)bin\App_Plugins" "$(ProjectDir)App_Plugins"
 ```
 
-# Check logs
+### Check logs
 Start console output after document ready
 ```js
 siteimprove.log = true
@@ -20,5 +20,5 @@ siteimprove.log = true
 ### Build the Umbraco package
 Run the build.bat
 
-## TODO
+### TODO
  - Upload package to some nuget repository
