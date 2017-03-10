@@ -1,4 +1,4 @@
-﻿var siteimprove = { log: false, initiated: false };
+﻿var siteimprove = { log: false };
 
 siteimprove.helper = {
 
@@ -26,9 +26,7 @@ siteimprove.helper = {
      * Workaround for closing the _si window
      */
     closeSi: function () {
-        if (siteimprove.initiated) {
-            (window._si || []).push(['input', '', '']);
-        }
+        (window._si || []).push(['input', '', '']);
     },
 
     /**
