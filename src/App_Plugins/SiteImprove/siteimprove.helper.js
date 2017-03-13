@@ -31,9 +31,24 @@ siteimprove.helper = {
 
     /**
      * Wrap simple ajax call getPageUrl
+     * @return {Promise}
      */
     getPageUrl: function (pageId) {
-        return $.get(this.backofficeApiUrl + '/getPageUrl?pageid=' + pageId);
+        return $.get(siteimprove.helper.backofficeApiUrl + '/getPageUrl?pageid=' + pageId);
+    },
+
+    /**
+     * Requests pageUrl from backoffice and send to SI
+     */
+    handleFetchPushUrl: function (method, pageId) {
+        this.getPageUrl(pageId)
+            .then(function (response) {
+                // When recieved the url => send off to _si
+                siteimprove.helper.pushSi(method, response);
+            })
+            .fail(function (error) {
+                siteimprove.helper.pushSi(method, ''); // If can't find page pass empty url
+            });
     },
 
     /**
@@ -44,13 +59,7 @@ siteimprove.helper = {
         // Only listen when user works on the content tree
         if (next.params.tree === 'content' && next.params.id) {
 
-            // Get page url from the backoffice api
-            this.getPageUrl(next.params.id)
-                .then(function (response) {
-
-                    // When recieved the url => send off to _si
-                    this.pushSi('input', response);
-                }.bind(this));
+            siteimprove.helper.handleFetchPushUrl('input', next.params.id);
 
             // Wait one js tick to hook on the publish button. 
             // The controller does not exist until after the route change
@@ -64,17 +73,13 @@ siteimprove.helper = {
 
                 // Hook on save and publish event
                 $scope.$on('formSubmitted', function (form) {
+                    siteimprove.helper.handleFetchPushUrl('recheck', form.targetScope.content.id);
+                });
 
-                    this.getPageUrl(form.targetScope.content.id)
-                    .then(function (response) {
-                        this.pushSi('recheck', response);
-                    }.bind(this));
-                }.bind(this));
-
-            }.bind(this), 0);
+            }, 0);
 
         } else {
-            this.closeSi(); // Because we listen on the routeChange, if we're no longer on the "content tree" => Close siteimprove window
+            siteimprove.helper.closeSi(); // Because we listen on the routeChange, if we're no longer on the "content tree" => Close siteimprove window
         }
 
     }

@@ -5,8 +5,7 @@
 angular.module('umbraco').factory('SiteImproveMenuActions', ['$http', '$rootScope', '$location', '$routeParams', '$log', 'appState', 'editorState', function ($http, $rootScope, $location, $routeParams, $log, appState, editorState) {
     var factory = new function () {
         var _si = window._si || [],
-            siHelper = window.siteimprove.helper,
-            backofficeApiUrl = '/umbraco/backoffice/api/siteImprove';
+            siHelper = window.siteimprove.helper;
 
         if (window.siteimprove.initiated) {
             if(window.siteimprove.log)
@@ -19,22 +18,14 @@ angular.module('umbraco').factory('SiteImproveMenuActions', ['$http', '$rootScop
          * Action from SiteImproveStartMenuItem.cs
          */
         this.Start = function () {
-            // Get page url from the backoffice api
-            $.get(backofficeApiUrl + '/getPageUrl?pageid=' + editorState.current.id)
-            .then(function (response) {
-                siHelper.pushSi('input', response);
-            });
+            siHelper.handleFetchPushUrl('input', editorState.current.id);
         };
 
         /**
          * Action from SiteImproveRecheckMenuItem.cs
          */
         this.Recheck = function () {
-            // Get page url from the backoffice api
-            $.get(backofficeApiUrl + '/getPageUrl?pageid=' + editorState.current.id)
-            .then(function (response) {
-                siHelper.pushSi('recheck', response);
-            });
+            siHelper.handleFetchPushUrl('recheck', editorState.current.id);
         };
 
     };
