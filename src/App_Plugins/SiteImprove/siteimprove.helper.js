@@ -1,4 +1,4 @@
-﻿var siteimprove = { log: false };
+﻿var siteimprove = { log: false, recrawlIds: [] };
 
 siteimprove.helper = {
 
@@ -10,15 +10,17 @@ siteimprove.helper = {
     pushSi: function (method, url) {
         var _si = window._si || [];
 
+
+
         // Get token from backoffice
         $.get(this.backofficeApiUrl + '/getToken')
         .then(function (response) {
 
+            if (siteimprove.log)
+                console.log('SiteImprove pass: ' + method + ' - ' + url);
+
             // Build full URL
-            _si.push([method, url, response, function () {
-                if (siteimprove.log)
-                    console.log('SiteImprove pass: ' + method + ' - ' + url);
-            }]);
+            _si.push([method, url, response]);
         });
     },
 
@@ -40,14 +42,29 @@ siteimprove.helper = {
     /**
      * Requests pageUrl from backoffice and send to SI
      */
-    handleFetchPushUrl: function (method, pageId) {
+    handleFetchPushUrl: function (method, pageId, isFormPublish) {
         this.getPageUrl(pageId)
             .then(function (response) {
-                // When recieved the url => send off to _si
-                siteimprove.helper.pushSi(method, response);
+                
+                if (response.success) {
+
+                    // When recieved the url => send off to _si
+                    siteimprove.helper.pushSi(method, response.url);
+
+                }
+                else {
+                    if (isFormPublish) {
+                        siteimprove.helper.closeSi();
+                        return;
+                    }
+
+                    // If can't find page pass empty url
+                    siteimprove.helper.pushSi(method, ''); 
+                }
+                
             })
             .fail(function (error) {
-                siteimprove.helper.pushSi(method, ''); // If can't find page pass empty url
+                siteimprove.helper.closeSi();
             });
     },
 
@@ -57,7 +74,7 @@ siteimprove.helper = {
     on$routeChangeSuccess: function (e, next, current) {
 
         // Only listen when user works on the content tree
-        if (next.params.tree === 'content' && next.params.id) {
+        if (next.params.tree === 'content' && !next.params.hasOwnProperty('create') && next.params.id) {
 
             siteimprove.helper.handleFetchPushUrl('input', next.params.id);
 
@@ -73,7 +90,11 @@ siteimprove.helper = {
 
                 // Hook on save and publish event
                 $scope.$on('formSubmitted', function (form) {
-                    siteimprove.helper.handleFetchPushUrl('recheck', form.targetScope.content.id);
+                    if (siteimprove.recrawlIds.indexOf(form.targetScope.content.id.toString()) > -1) {
+                        siteimprove.helper.handleFetchPushUrl('recrawl', form.targetScope.content.id, true);
+                    } else {
+                        siteimprove.helper.handleFetchPushUrl('recheck', form.targetScope.content.id, true);
+                    }
                 });
 
             }, 0);

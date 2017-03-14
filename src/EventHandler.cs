@@ -1,12 +1,8 @@
-﻿using SiteImprove.Umbraco.Plugin.Models;
-using SiteImprove.Umbraco.Plugin.MenuActions;
-using System;
-using System.Collections.Generic;
+﻿using SiteImprove.Umbraco.Plugin.MenuActions;
+using SiteImprove.Umbraco.Plugin.Models;
 using System.Linq;
-using System.Web;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
-using Umbraco.Core.Services;
 using Umbraco.Web.Trees;
 
 namespace SiteImprove.Umbraco.Plugin
@@ -20,10 +16,12 @@ namespace SiteImprove.Umbraco.Plugin
 
             this.AddDbTable(applicationContext);
         }
-        
+
         private void TreeControllerBase_MenuRendering(TreeControllerBase sender, MenuRenderingEventArgs e)
         {
-            if(sender.TreeAlias == "content")
+            var node = sender.Umbraco.TypedContent(e.NodeId);
+
+            if (sender.TreeAlias == "content" && node != null)
             {
                 e.Menu.Items.Add(new SiteImproveRecheckMenuItem());
             }
@@ -32,10 +30,18 @@ namespace SiteImprove.Umbraco.Plugin
         private void AddDbTable(ApplicationContext applicationContext)
         {
             var db = applicationContext.DatabaseContext.Database;
-
+            
             if (!db.TableExist(Constants.SiteImproveDbTalbe))
             {
                 db.CreateTable<SiteImproveSettingsModel>(false);
+                return;
+            }
+            
+            // Handle legacy
+            var row = db.Query<SiteImproveSettingsModel>("SELECT TOP 1 * FROM " + Constants.SiteImproveDbTalbe).FirstOrDefault();
+            if (row != null && !row.Installed)
+            {
+                db.CreateTable<SiteImproveSettingsModel>(true);
             }
         }
     }

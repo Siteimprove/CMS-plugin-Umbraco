@@ -2,6 +2,8 @@
     '$scope', '$http',
     function ($scope, $http) {
         $scope.token = "";
+        $scope.crawlingIds = "";
+        $scope.output = "";
 
         $scope.requestNewToken = function () {
             $scope.token = "Loading...";
@@ -9,14 +11,25 @@
                 .then(function (resp) {
                     $scope.token = resp.data;
                 });
-        }
+        };
+
+        $scope.saveIds = function () {
+            $http.post('/umbraco/backoffice/api/siteImprove/setCrawlingIds?ids=' + $scope.crawlingIds)
+                .then(function () {
+                    $scope.output = "Saved!";
+                    setTimeout(function () {
+                        $scope.output = "";
+                    }, 2000);
+                });
+        };
 
         $scope.loadData = function () {
-            $http.get('/umbraco/backoffice/api/siteImprove/getToken')
+            $http.get('/umbraco/backoffice/api/siteImprove/getSettings')
                 .then(function (resp) {
-                    $scope.token = resp.data;
+                    $scope.token = resp.data.token;
+                    $scope.crawlingIds = resp.data.crawlingIds;
                 });
-        }
+        };
 
         $scope.loadData();
     }

@@ -1,4 +1,16 @@
 ﻿<div ng-controller="SiteImprove.DashboardController">
-    <h2>Token</h2>
-    <p>{{token}}</p> <button type="button" class="btn" ng-click="requestNewToken()">Request new</button>
+    <div>
+        <h2>Token</h2>
+        <p>{{token}}</p> <button type="button" class="btn" ng-click="requestNewToken()">Request new</button>
+    </div>
+
+    <div>
+        <h2>Recrawl id's</h2>
+        <p>Specify all the id's that will trigger a recrawl. Comma separate the id's</p>
+        <p><input type="text" value="{{crawlingIds}}" ng-model="crawlingIds"/> <button class="btn" ng-click="saveIds()">Save</button></p>
+    </div>
+
+    <div>
+        {{output}}
+    </div>
 </div>

@@ -7,6 +7,11 @@ $(window).load(function () {
         var siHelper = window.siteimprove.helper,
             $scope = angular.element('body').scope(); // Get $rootSope
 
+        $.get(siHelper.backofficeApiUrl + '/getCrawlingIds')
+            .then(function (response) {
+                window.siteimprove.recrawlIds = (response || '').split(',');
+            });
+
         if ($scope) {
             $scope.$on('$routeChangeSuccess', siHelper.on$routeChangeSuccess.bind(siHelper));
         }

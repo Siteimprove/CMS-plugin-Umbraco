@@ -13,5 +13,11 @@ namespace SiteImprove.Umbraco.Plugin.Models
 
         [Column("Token")]
         public string Token { get; set; }
+
+        [Column("CrawlIds")]
+        public string CrawlIds { get; set; }
+
+        [Column("Installed")]
+        public bool Installed { get; set; }
     }
 }
