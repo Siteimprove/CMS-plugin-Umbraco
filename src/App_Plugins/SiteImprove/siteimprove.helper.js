@@ -10,8 +10,6 @@ siteimprove.helper = {
     pushSi: function (method, url) {
         var _si = window._si || [];
 
-
-
         // Get token from backoffice
         $.get(this.backofficeApiUrl + '/getToken')
         .then(function (response) {
@@ -45,7 +43,7 @@ siteimprove.helper = {
     handleFetchPushUrl: function (method, pageId, isFormPublish) {
         this.getPageUrl(pageId)
             .then(function (response) {
-                
+
                 if (response.success) {
 
                     // When recieved the url => send off to _si
@@ -59,9 +57,9 @@ siteimprove.helper = {
                     }
 
                     // If can't find page pass empty url
-                    siteimprove.helper.pushSi(method, ''); 
+                    siteimprove.helper.pushSi(method, '');
                 }
-                
+
             })
             .fail(function (error) {
                 siteimprove.helper.closeSi();
@@ -76,7 +74,21 @@ siteimprove.helper = {
         // Only listen when user works on the content tree
         if (next.params.tree === 'content' && !next.params.hasOwnProperty('create') && next.params.id) {
 
-            siteimprove.helper.handleFetchPushUrl('input', next.params.id);
+            if (siteimprove.recrawlIds.length < 1) {
+                $.get(siteimprove.helper.backofficeApiUrl + '/getCrawlingIds')
+                    .then(function (response) {
+                        siteimprove.recrawlIds = (response || '').split(',');
+                    });
+            }
+
+            var method;
+
+            if (current)
+                method = current.params.hasOwnProperty('create') ? 'recheck' : 'input';
+            else
+                method = "input";
+
+            siteimprove.helper.handleFetchPushUrl(method, next.params.id);
 
             // Wait one js tick to hook on the publish button. 
             // The controller does not exist until after the route change

@@ -17,6 +17,11 @@
             $http.post('/umbraco/backoffice/api/siteImprove/setCrawlingIds?ids=' + $scope.crawlingIds)
                 .then(function () {
                     $scope.output = "Saved!";
+                    
+                    if (window.siteimprove) {
+                        window.siteimprove.recrawlIds = ($scope.crawlingIds || '').split(',');
+                    }
+
                     setTimeout(function () {
                         $scope.output = "";
                     }, 2000);
