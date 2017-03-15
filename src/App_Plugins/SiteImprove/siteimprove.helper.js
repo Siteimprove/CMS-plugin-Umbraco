@@ -1,4 +1,4 @@
-﻿var siteimprove = { log: false, recrawlIds: [] };
+﻿var siteimprove = { log: false, recrawlIds: [], token: '' };
 
 siteimprove.helper = {
 
@@ -10,16 +10,25 @@ siteimprove.helper = {
     pushSi: function (method, url) {
         var _si = window._si || [];
 
-        // Get token from backoffice
-        $.get(this.backofficeApiUrl + '/getToken')
-        .then(function (response) {
+        // Get token from backoffice if not set
+        if (!siteimprove.token) {
+            $.get(this.backofficeApiUrl + '/getToken')
+                .then(function (response) {
+                    siteimprove.token = response;
 
+                    if (siteimprove.log)
+                        console.log('SiteImprove pass: ' + method + ' - ' + url);
+
+                    // Build full URL
+                    _si.push([method, url, response]);
+                });
+        } else {
             if (siteimprove.log)
                 console.log('SiteImprove pass: ' + method + ' - ' + url);
 
             // Build full URL
-            _si.push([method, url, response]);
-        });
+            _si.push([method, url, siteimprove.token]);
+        }
     },
 
     /**
@@ -52,7 +61,7 @@ siteimprove.helper = {
                 }
                 else {
                     if (isFormPublish) {
-                        siteimprove.helper.closeSi();
+                        siteimprove.helper.pushSi('input', '');
                         return;
                     }
 

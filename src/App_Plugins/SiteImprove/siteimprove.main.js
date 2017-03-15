@@ -12,6 +12,11 @@ $(window).load(function () {
                 window.siteimprove.recrawlIds = (response || '').split(',');
             });
 
+        $.get(siHelper.backofficeApiUrl + '/getToken')
+            .then(function (response) {
+                window.siteimprove.token = response;
+            });
+
         if ($scope) {
             $scope.$on('$routeChangeSuccess', siHelper.on$routeChangeSuccess.bind(siHelper));
         }
