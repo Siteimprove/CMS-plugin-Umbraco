@@ -221,6 +221,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Constants.cs" />
+    <Compile Include="MenuActions\SiteImproveRecrawlMenuItem.cs" />
     <Compile Include="Models\SiteImproveSettingsHelper.cs" />
     <Compile Include="EventHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

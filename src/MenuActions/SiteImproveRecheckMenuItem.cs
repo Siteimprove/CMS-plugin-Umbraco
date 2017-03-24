@@ -8,7 +8,7 @@ namespace SiteImprove.Umbraco.Plugin.MenuActions
         public SiteImproveRecheckMenuItem()
         {
             this.Icon = "conversation";
-            this.Name = "Recheck SiteImprove";
+            this.Name = "Recheck Siteimprove";
             this.SeperatorBefore = true;
         }
     }

@@ -20,9 +20,16 @@ namespace SiteImprove.Umbraco.Plugin
         private void TreeControllerBase_MenuRendering(TreeControllerBase sender, MenuRenderingEventArgs e)
         {
             var node = sender.Umbraco.TypedContent(e.NodeId);
-
+            
             if (sender.TreeAlias == "content" && node != null)
             {
+                var settingsHelper = new SiteImproveSettingsHelper(sender.ApplicationContext.DatabaseContext, sender.Umbraco);
+                var ids = settingsHelper.GetCrawlIds().Split(',');
+                if (ids.Any(s => s == e.NodeId))
+                {
+                    e.Menu.Items.Add(new SiteImproveRecrawlMenuItem());
+                }
+
                 e.Menu.Items.Add(new SiteImproveRecheckMenuItem());
             }
         }

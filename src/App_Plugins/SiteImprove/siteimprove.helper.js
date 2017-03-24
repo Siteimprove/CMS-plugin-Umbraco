@@ -111,11 +111,7 @@ siteimprove.helper = {
 
                 // Hook on save and publish event
                 $scope.$on('formSubmitted', function (form) {
-                    if (siteimprove.recrawlIds.indexOf(form.targetScope.content.id.toString()) > -1) {
-                        siteimprove.helper.handleFetchPushUrl('recrawl', form.targetScope.content.id, true);
-                    } else {
-                        siteimprove.helper.handleFetchPushUrl('recheck', form.targetScope.content.id, true);
-                    }
+                    siteimprove.helper.handleFetchPushUrl('recheck', form.targetScope.content.id, true);
                 });
 
             }, 0);

@@ -28,6 +28,12 @@ angular.module('umbraco').factory('SiteImproveMenuActions', ['$http', '$rootScop
             siHelper.handleFetchPushUrl('recheck', editorState.current.id);
         };
 
+        /**
+         * Action from SiteImproveRecrawlMenuItem.cs
+         */
+        this.Recrawl = function () {
+            siHelper.handleFetchPushUrl('recrawl', editorState.current.id);
+        };
     };
 
     return factory;
