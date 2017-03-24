@@ -4,6 +4,6 @@
         '~/App_Plugins/SiteImprove/siteimprove.main.js',
 		'~/App_Plugins/SiteImprove/siteimprove.controller.js',
 		'~/App_Plugins/SiteImprove/dashboard.js',
-		'https://cdn.siteimprove.net/overlay.js'
+		'https://cdn.siteimprove.net/cms/overlay.js'
     ]
 }
