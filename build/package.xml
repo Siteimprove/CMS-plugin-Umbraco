@@ -2,11 +2,11 @@
 <umbPackage>
   <info>
     <package>
-      <name>SiteImproveUmbracoPlugin</name>
+      <name>Siteimprove</name>
       <version>0.0.0</version>
       <iconUrl />
-      <license url="http://www.kruso.dk">Licensed to Kruso Digital</license>
-      <url>http://www.kruso.dk</url>
+      <license url="https://siteimprove.com/legal/cms-plugin-terms">MIT</license>
+      <url>http://siteimprove.com</url>
       <requirements>
         <major>0</major>
         <minor>0</minor>
@@ -14,8 +14,8 @@
       </requirements>
     </package>
     <author>
-      <name>Kruso Digital</name>
-      <website>http://www.kruso.dk</website>
+      <name>Siteimprove A/S</name>
+      <website>http://siteimprove.com</website>
     </author>
     <readme><![CDATA[]]></readme>
   </info>
