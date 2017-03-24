@@ -121,10 +121,7 @@ siteimprove.helper = {
             }, 0);
 
         } else {
-            if (siteimprove.log)
-                console.log('SiteImprove pass: clear');
-
-            (window._si || []).push(['clear']); // Because we listen on the routeChange, if we're no longer on the "content tree" => Clear siteimprove
+            siteimprove.helper.pushSi('domain', '');
         }
     }
 }
