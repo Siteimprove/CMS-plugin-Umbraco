@@ -25,7 +25,7 @@
   <PropertyGroup>
     <VersionMajor>1</VersionMajor>
     <VersionMinor>3</VersionMinor>
-    <VersionPatch>5</VersionPatch>
+    <VersionPatch>6</VersionPatch>
     <VersionSuffix></VersionSuffix>
     <UmbracoVersion>7.1.9</UmbracoVersion>
   </PropertyGroup>
@@ -70,7 +70,7 @@
       <PackageFile Include="$(MSBuildProjectDirectory)\package.xml" />
       <NuSpecFile Include="$(MSBuildProjectDirectory)\package.nuspec" />
       <TransFroms Include="$(MSBuildProjectDirectory)\nuget-transforms\*.*" />
-      <DashboardConfigXDTInstallFile Include="$(MSBuildProjectDirectory)\transforms\dashboard.config.install.xdt" />
+      <DashboardConfigXDTTransformationFiles Include="$(MSBuildProjectDirectory)\transforms\*.xdt" />
     </ItemGroup>
     <Copy SourceFiles="@(BinFiles)" DestinationFolder="$(BuildDir)\bin" />
     <Copy SourceFiles="@(WebFiles)" DestinationFolder="$(BuildDir)\App_Plugins\%(RecursiveDir)" />
@@ -79,7 +79,7 @@
     <Copy SourceFiles="@(WebFiles)" DestinationFolder="$(BuildNuGetDir)\App_Plugins\%(RecursiveDir)" />
     <Copy SourceFiles="@(NuSpecFile)" DestinationFolder="$(BuildNuGetDir)" />
     <Copy SourceFiles="@(TransFroms)" DestinationFolder="$(BuildNuGetDir)\nuget-transforms\%(RecursiveDir)" />
-    <Copy SourceFiles="@(DashboardConfigXDTInstallFile)" DestinationFolder="$(BuildNuGetDir)\Content\Config" />
+    <Copy SourceFiles="@(DashboardConfigXDTTransformationFiles)" DestinationFolder="$(BuildNuGetDir)\Content\Config" />
   </Target>
 
   <Target Name="ManifestUmbraco" DependsOnTargets="PrepairFiles">
