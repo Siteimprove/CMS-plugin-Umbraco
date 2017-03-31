@@ -1,8 +1,13 @@
-﻿var siteimprove = { log: false, recrawlIds: [], token: '' };
+﻿var siteimprove = {
+    log: false,
+    recrawlIds: [],
+    token: ''
+};
 
 siteimprove.helper = {
 
     backofficeApiUrl: '/umbraco/backoffice/api/siteImprove',
+    isCreatingPage: false,
 
     /**
      * Will fetch _si token and push of method to _si
@@ -81,7 +86,7 @@ siteimprove.helper = {
     on$routeChangeSuccess: function (e, next, current) {
 
         // Only listen when user works on the content tree
-        if (next.params.tree === 'content' && !next.params.hasOwnProperty('create') && next.params.id) {
+        if (next.params.tree === 'content') {
 
             if (siteimprove.recrawlIds.length < 1) {
                 $.get(siteimprove.helper.backofficeApiUrl + '/getCrawlingIds')
@@ -89,15 +94,6 @@ siteimprove.helper = {
                         siteimprove.recrawlIds = (response || '').split(',');
                     });
             }
-
-            var method;
-
-            if (current)
-                method = current.params.hasOwnProperty('create') ? 'recheck' : 'input';
-            else
-                method = "input";
-
-            siteimprove.helper.handleFetchPushUrl(method, next.params.id);
 
             // Wait one js tick to hook on the publish button. 
             // The controller does not exist until after the route change
@@ -111,6 +107,13 @@ siteimprove.helper = {
 
                 // Hook on save and publish event
                 $scope.$on('formSubmitted', function (form) {
+
+                    // Page has been submitted, but no id on the page. They just created a new page
+                    if (form.targetScope.content.id == 0) {
+                        siteimprove.helper.isCreatingPage = true;
+                        return;
+                    }
+
                     if (siteimprove.recrawlIds.indexOf(form.targetScope.content.id.toString()) > -1) {
                         siteimprove.helper.handleFetchPushUrl('recrawl', form.targetScope.content.id, true);
                     } else {
@@ -120,7 +123,15 @@ siteimprove.helper = {
 
             }, 0);
 
-        } else {
+            if (!next.params.hasOwnProperty('create') && !current.params.hasOwnProperty('create') && next.params.id) {
+                siteimprove.helper.handleFetchPushUrl('input', next.params.id);
+            }
+            else if (siteimprove.helper.isCreatingPage) {
+                siteimprove.helper.isCreatingPage = false;
+                siteimprove.helper.handleFetchPushUrl('recheck', next.params.id);
+            }
+
+        } else if (next.params.tree !== 'content') {
             siteimprove.helper.pushSi('domain', '');
         }
     }
