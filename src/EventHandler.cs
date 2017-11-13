@@ -36,9 +36,14 @@ namespace SiteImprove.Umbraco.Plugin
                 db.CreateTable<SiteImproveSettingsModel>(false);
                 return;
             }
-            
+
             // Handle legacy
-            var row = db.Query<SiteImproveSettingsModel>("SELECT TOP 1 * FROM " + Constants.SiteImproveDbTalbe).FirstOrDefault();
+            var row = db
+                .Query<SiteImproveSettingsModel>(
+                    SiteImproveSettingsHelper.SelectTopQuery(
+                        applicationContext.DatabaseContext.DatabaseProvider, 1, Constants.SiteImproveDbTalbe))
+                .FirstOrDefault();
+
             if (row != null && !row.Installed)
             {
                 db.CreateTable<SiteImproveSettingsModel>(true);

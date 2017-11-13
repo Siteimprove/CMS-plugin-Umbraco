@@ -3,6 +3,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Umbraco.Core;
+using Umbraco.Core.Persistence;
 using Umbraco.Web;
 
 namespace SiteImprove.Umbraco.Plugin.Models
@@ -18,6 +19,28 @@ namespace SiteImprove.Umbraco.Plugin.Models
             this.Umbraco = umbraco;
 
             this.InitializeModel();
+        }
+
+        public static string SelectTopQuery(DatabaseProviders databaseProviders, int number, string table)
+        {
+            switch (databaseProviders)
+            {
+                case DatabaseProviders.SqlAzure:
+                case DatabaseProviders.SqlServerCE:
+                case DatabaseProviders.SqlServer:
+                    return string.Format("SELECT TOP {0} * FROM {1}", number, table);
+                    
+                case DatabaseProviders.PostgreSQL:
+                case DatabaseProviders.SQLite:
+                case DatabaseProviders.MySql:
+                    return string.Format("SELECT * FROM {1} LIMIT {0}", number, table);
+
+                case DatabaseProviders.Oracle:
+                    return string.Format("SELECT * FROM {1} WHERE ROWNUM<={0}", number, table);
+
+                default:
+                    return string.Format("SELECT TOP {0} * FROM {1}", number, table);                    
+            }
         }
         
         /// <summary>
@@ -136,7 +159,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
 
         private T GetFirstRow<T>(string table) where T : class
         {
-            var query = Ctx.Database.Query<T>("SELECT TOP 1 * FROM " + table);
+            var query = Ctx.Database.Query<T>(SelectTopQuery(Ctx.DatabaseProvider, 1, table));
             return query.Any() ? query.First() : null;
         }
 
