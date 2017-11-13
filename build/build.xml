@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <Import Project="$(MSBuildCommunityTasksPath)\MSBuild.Community.Tasks.Targets" />
-  <Import Project="$(MSBuildUmbracoTasksPath)\MSBuild.Umbraco.Tasks.Targets" />
+  <Import Project="$(MSBuildUmbracoTasksPath)\MSBuild.Umbraco.Tasks.targets" />
   <Import Project="$(MSBuildNugetTasksPath)\MSBuild.NuGet.Tasks.Targets" />
   
   
@@ -25,7 +25,7 @@
   <PropertyGroup>
     <VersionMajor>1</VersionMajor>
     <VersionMinor>3</VersionMinor>
-    <VersionPatch>7</VersionPatch>
+    <VersionPatch>8</VersionPatch>
     <VersionSuffix></VersionSuffix>
     <UmbracoVersion>7.1.9</UmbracoVersion>
   </PropertyGroup>
