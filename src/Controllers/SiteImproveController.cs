@@ -14,13 +14,17 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
 
         public SiteImproveController()
         {
-            this.SettingsHelper = new SiteImproveSettingsHelper(ApplicationContext.DatabaseContext, Umbraco);
         }
 
+        public void Init()
+        {
+            this.SettingsHelper = new SiteImproveSettingsHelper(ApplicationContext.DatabaseContext, Umbraco);
+        }
 
         [HttpGet]
         public async Task<HttpResponseMessage> GetSettings()
         {
+            Init();
             var model = new
             {
                 token = await SettingsHelper.GetToken(),
@@ -34,6 +38,7 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
         [HttpGet]
         public async Task<HttpResponseMessage> GetToken()
         {
+            Init();
             return Request.CreateResponse(
                 HttpStatusCode.OK,
                 await SettingsHelper.GetToken());
@@ -42,6 +47,7 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
         [HttpGet]
         public async Task<HttpResponseMessage> RequestNewToken()
         {
+            Init();
             return Request.CreateResponse(
                 HttpStatusCode.OK,
                 await SettingsHelper.GetNewToken());
@@ -50,6 +56,7 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
         [HttpGet]
         public HttpResponseMessage GetCrawlingIds()
         {
+            Init();
             return Request.CreateResponse(
                 HttpStatusCode.OK,
                 SettingsHelper.GetCrawlIds());
@@ -58,6 +65,7 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
         [HttpPost]
         public HttpResponseMessage SetCrawlingIds([FromUri] string ids)
         {
+            Init();
             SettingsHelper.SetCrawlIds(ids);
             return Request.CreateResponse(HttpStatusCode.OK);
         }
@@ -65,6 +73,7 @@ namespace SiteImprove.Umbraco.Plugin.Controllers
         [HttpGet]
         public HttpResponseMessage GetPageUrl(int pageId)
         {
+            Init();
             var node = Umbraco.TypedContent(pageId);
 
             var model = new

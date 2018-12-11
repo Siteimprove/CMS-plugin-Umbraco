@@ -3,6 +3,7 @@ using SiteImprove.Umbraco.Plugin.Models;
 using System.Linq;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
+using Umbraco.Web;
 using Umbraco.Web.Trees;
 
 namespace SiteImprove.Umbraco.Plugin
@@ -14,8 +15,12 @@ namespace SiteImprove.Umbraco.Plugin
             base.ApplicationStarted(umbracoApplication, applicationContext);
             TreeControllerBase.MenuRendering += TreeControllerBase_MenuRendering;
 
-            this.AddDbTable(applicationContext);
+            var helper = new UmbracoHelper(UmbracoContext.Current);
+            var settingsHelper = new SiteImproveSettingsHelper(applicationContext.DatabaseContext, helper);
+            settingsHelper.AddDbTable(applicationContext);
+            settingsHelper.InitializeModel();
         }
+
 
         private void TreeControllerBase_MenuRendering(TreeControllerBase sender, MenuRenderingEventArgs e)
         {
@@ -24,29 +29,6 @@ namespace SiteImprove.Umbraco.Plugin
             if (sender.TreeAlias == "content" && node != null)
             {
                 e.Menu.Items.Add(new SiteImproveRecheckMenuItem());
-            }
-        }
-
-        private void AddDbTable(ApplicationContext applicationContext)
-        {
-            var db = applicationContext.DatabaseContext.Database;
-            
-            if (!db.TableExist(Constants.SiteImproveDbTalbe))
-            {
-                db.CreateTable<SiteImproveSettingsModel>(false);
-                return;
-            }
-
-            // Handle legacy
-            var row = db
-                .Query<SiteImproveSettingsModel>(
-                    SiteImproveSettingsHelper.SelectTopQuery(
-                        applicationContext.DatabaseContext.DatabaseProvider, 1, Constants.SiteImproveDbTalbe))
-                .FirstOrDefault();
-
-            if (row != null && !row.Installed)
-            {
-                db.CreateTable<SiteImproveSettingsModel>(true);
             }
         }
     }

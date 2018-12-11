@@ -17,8 +17,39 @@ namespace SiteImprove.Umbraco.Plugin.Models
         {
             this.Ctx = ctx;
             this.Umbraco = umbraco;
+        }
 
-            this.InitializeModel();
+        public void InitializeModel()
+        {
+            var row = GetFirstRow<SiteImproveSettingsModel>(Constants.SiteImproveDbTalbe);
+            if (row == null)
+            {
+                row = GenerateDefaultModel();
+                this.Ctx.Database.Insert(row);
+            }
+        }
+
+        public void AddDbTable(ApplicationContext applicationContext)
+        {
+            var db = applicationContext.DatabaseContext.Database;
+
+            if (!db.TableExist(Constants.SiteImproveDbTalbe))
+            {
+                db.CreateTable<SiteImproveSettingsModel>(false);
+                return;
+            }
+
+            // Handle legacy
+            var row = db
+                .Query<SiteImproveSettingsModel>(
+                    SiteImproveSettingsHelper.SelectTopQuery(
+                        applicationContext.DatabaseContext.DatabaseProvider, 1, Constants.SiteImproveDbTalbe))
+                .FirstOrDefault();
+
+            if (row != null && !row.Installed)
+            {
+                db.CreateTable<SiteImproveSettingsModel>(true);
+            }
         }
 
         public static string SelectTopQuery(DatabaseProviders databaseProviders, int number, string table)
@@ -29,7 +60,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
                 case DatabaseProviders.SqlServerCE:
                 case DatabaseProviders.SqlServer:
                     return string.Format("SELECT TOP {0} * FROM {1}", number, table);
-                    
+
                 case DatabaseProviders.PostgreSQL:
                 case DatabaseProviders.SQLite:
                 case DatabaseProviders.MySql:
@@ -39,10 +70,10 @@ namespace SiteImprove.Umbraco.Plugin.Models
                     return string.Format("SELECT * FROM {1} WHERE ROWNUM<={0}", number, table);
 
                 default:
-                    return string.Format("SELECT TOP {0} * FROM {1}", number, table);                    
+                    return string.Format("SELECT TOP {0} * FROM {1}", number, table);
             }
         }
-        
+
         /// <summary>
         /// Returns the token that exist in the first row
         /// </summary>
@@ -56,7 +87,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
                 // Token did not exist in database, fetch from SiteImprove
                 string token = await RequestTokenAsync();
 
-                var row = new SiteImproveSettingsModel { Token = token };
+                var row = new SiteImproveSettingsModel {Token = token};
                 Ctx.Database.Insert(row);
 
                 return token;
@@ -73,7 +104,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
         public async Task<string> GetNewToken()
         {
             var row = GetFirstRow<SiteImproveSettingsModel>(Constants.SiteImproveDbTalbe);
-            if(row == null)
+            if (row == null)
             {
                 return await GetToken();
             }
@@ -91,14 +122,9 @@ namespace SiteImprove.Umbraco.Plugin.Models
         public string GetCrawlIds()
         {
             var row = GetFirstRow<SiteImproveSettingsModel>(Constants.SiteImproveDbTalbe);
-            if(row == null)
-            {
-                this.InitializeModel();
-                return null;
-            }
 
             // Handle legacy
-            if(row.Installed == false)
+            if (row.Installed == false)
             {
                 row.Installed = true;
 
@@ -109,13 +135,13 @@ namespace SiteImprove.Umbraco.Plugin.Models
 
             return row.CrawlIds;
         }
-        
+
         public void SetCrawlIds(string ids)
         {
             ids = ids ?? "";
 
             var row = GetFirstRow<SiteImproveSettingsModel>(Constants.SiteImproveDbTalbe);
-            if(row == null)
+            if (row == null)
             {
                 row = GenerateDefaultModel(ids);
                 Ctx.Database.Insert(row);
@@ -127,21 +153,10 @@ namespace SiteImprove.Umbraco.Plugin.Models
         }
 
 
-
-        private void InitializeModel()
-        {
-            var row = GetFirstRow<SiteImproveSettingsModel>(Constants.SiteImproveDbTalbe);
-            if (row == null)
-            {
-                row = GenerateDefaultModel();
-                this.Ctx.Database.Insert(row);
-            }
-        }
-
         private SiteImproveSettingsModel GenerateDefaultModel()
         {
             var publishedRootPages = this.Umbraco.TypedContentAtRoot();
-            
+
             return new SiteImproveSettingsModel
             {
                 Installed = true,
@@ -149,6 +164,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
                 CrawlIds = publishedRootPages.Any() ? publishedRootPages.First().Id.ToString() : null
             };
         }
+
         private SiteImproveSettingsModel GenerateDefaultModel(string crawlingIds)
         {
             var model = GenerateDefaultModel();
