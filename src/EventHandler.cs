@@ -1,6 +1,7 @@
 ﻿using SiteImprove.Umbraco.Plugin.MenuActions;
 using SiteImprove.Umbraco.Plugin.Models;
 using System.Linq;
+using System.Net;
 using Umbraco.Core;
 using Umbraco.Core.Persistence;
 using Umbraco.Web;
@@ -13,12 +14,20 @@ namespace SiteImprove.Umbraco.Plugin
         protected override void ApplicationStarted(UmbracoApplicationBase umbracoApplication, ApplicationContext applicationContext)
         {
             base.ApplicationStarted(umbracoApplication, applicationContext);
+            //force all outgoing connections to TLS 1.2 first
+            //(it still falls back to 1.1 / 1.0 if the remote doesn't support 1.2).
+            if (ServicePointManager.SecurityProtocol.HasFlag(SecurityProtocolType.Tls12) == false)
+            {
+                ServicePointManager.SecurityProtocol = ServicePointManager.SecurityProtocol | SecurityProtocolType.Tls12;
+            }
+
             TreeControllerBase.MenuRendering += TreeControllerBase_MenuRendering;
 
             var helper = new UmbracoHelper(UmbracoContext.Current);
             var settingsHelper = new SiteImproveSettingsHelper(applicationContext.DatabaseContext, helper);
             settingsHelper.AddDbTable(applicationContext);
             settingsHelper.InitializeModel();
+
         }
 
 
