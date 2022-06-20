@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json.Linq;
+using System.Configuration;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -87,7 +88,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
                 // Token did not exist in database, fetch from SiteImprove
                 string token = await RequestTokenAsync();
 
-                var row = new SiteImproveSettingsModel {Token = token};
+                var row = new SiteImproveSettingsModel { Token = token };
                 Ctx.Database.Insert(row);
 
                 return token;
@@ -179,11 +180,48 @@ namespace SiteImprove.Umbraco.Plugin.Models
             return query.Any() ? query.First() : null;
         }
 
+        /// <summary>
+        /// A simple helper to append the cms param to the SiteImproveTokenUrl
+        /// to accurately pass to the API the cms version of Umbraco calling to it.
+        /// Example Url: https://my2.siteimprove.com/auth/token?cms=Umbraco-7.15.6
+        /// 
+        /// This is a "fix" for Umbraco 7 use of this plugin as the my2.siteimprove/auth/token
+        /// endpoint now requires a cms param. 
+        /// </summary>
+        /// <returns></returns>
+        private string GetSiteImproveTokenUrlWithCmsParam()
+        {
+            var siTokenUrlWithCmsParam = Constants.SiteImproveTokenUrl;
+
+            if (siTokenUrlWithCmsParam.Contains("?") == false)
+            {
+                siTokenUrlWithCmsParam += "?";
+            }
+            else
+            {
+                siTokenUrlWithCmsParam += "&";
+            }
+
+            var cmsParam = "cms=Umbraco-7.0.0";
+
+            // attempt to get specific Umbraco version...
+            var umbVersion = ConfigurationManager.AppSettings["umbracoConfigurationStatus"] as string;
+            if (string.IsNullOrWhiteSpace(umbVersion) == false)
+            {
+                cmsParam = $"cms=Umbraco-{umbVersion}";
+            }
+
+            // concatenate the cms param...
+            siTokenUrlWithCmsParam = siTokenUrlWithCmsParam + cmsParam;
+
+            return siTokenUrlWithCmsParam;
+        }
+
         private async Task<string> RequestTokenAsync()
         {
             using (var client = new HttpClient())
             {
-                string response = await client.GetStringAsync(Constants.SiteImproveTokenUrl);
+                string response = await client.GetStringAsync(GetSiteImproveTokenUrlWithCmsParam());
                 return JObject.Parse(response).GetValue("token").ToString();
             }
         }
@@ -192,7 +230,7 @@ namespace SiteImprove.Umbraco.Plugin.Models
         {
             using (var client = new HttpClient())
             {
-                string response = client.GetStringAsync(Constants.SiteImproveTokenUrl).Result;
+                string response = client.GetStringAsync(GetSiteImproveTokenUrlWithCmsParam()).Result;
                 return JObject.Parse(response).GetValue("token").ToString();
             }
         }
